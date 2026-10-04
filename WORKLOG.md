@@ -65,7 +65,7 @@ agent         31      17  0 04:47 pts/0    00:00:00 /opt/agent/agent-leak-app
 
 | 단계 | 결과 |
 |---|---|
-| 계획의 테스트 8개 작성 후 실행(구현 없음) | `PASS 0 / FAIL 8` (RED) → `test:` 커밋 |
+| 계획의 테스트 8개 작성 후 실행(구현 없음) | `PASS 0 / FAIL 8` (RED, 터미널 확인, 원본 미보존) → `test:` 커밋 |
 | 1차 구현(구간 CPU, cgroup 기준 MEM%, LOG_AGE, 자기 자신 제외) | 호스트 `PASS 8 / FAIL 0` |
 | 발견 2 를 반영한 테스트 `pick_worker` 추가(부모·자식이 같은 명령줄인 가짜 프로세스) | `FAIL pick_worker: parent=706870 child=706872 got: … PID:706870 CPU:0.0% …` (RED) |
 | 후보의 부모도 후보이면 부모를 빼도록 수정 | 호스트 `PASS 9 / FAIL 0`, 컨테이너(`docker run --rm … b4-2-lab bash tests/test_monitor.sh`) `PASS 9 / FAIL 0` |
@@ -102,7 +102,7 @@ agent         31      17  0 04:47 pts/0    00:00:00 /opt/agent/agent-leak-app
 1. 앱은 시작할 때 설정으로 시나리오를 하나 고른다. 그래서 각 케이스에서 나머지 변수는 "경고 없음" 값으로 고정해야 한다. 특히 Deadlock·CPU 케이스는 `MEMORY_LIMIT=512` 로 고정한다. 256 이면 OOM 이 먼저 일어난다.
 2. CPU 케이스의 방향이 계획과 반대였다. 낮은 값은 오히려 정상이고, **50 초과**가 와치독을 일으킨다. Before=80, After=50 으로 정했다.
 3. `e-cpu80` 에서 앱이 보고한 Load 는 56%까지 올랐지만, OS 가 잰 실제 CPU 는 monitor 0.2~1.2%(기동 직후 첫 샘플 8.0% 제외), `top -H` 0.0%, `docker stats` 최대 1.43% 였다. 이 "CPU 급상승"은 앱 내부 지표다. 실제로 코어를 태우지는 않는다. 리포트에는 두 값을 나란히 적고 이 차이를 명시한다.
-4. OOM 의 Heap 증가 속도는 3초당 25MB 로 일정했다. 그래서 같은 OOM 시나리오 안에서 128MB 와 256MB 를 비교하면 생존 시간이 한도에 비례하는지 볼 수 있다. 이것을 보조 실험으로 추가했다.
+4. OOM 의 Heap 증가 속도는 3초당 25MB 로 일정했다. 그래서 같은 OOM 시나리오 안에서 128MB 와 256MB 를 비교하면 한도와 생존 시간의 관계(선형)를 볼 수 있다. 이것을 보조 실험으로 추가했다.
 
 확정한 매트릭스는 PLAN.md 6.2.
 
@@ -111,9 +111,9 @@ agent         31      17  0 04:47 pts/0    00:00:00 /opt/agent/agent-leak-app
 | 시각 | 실행 | 결과 | 메모 |
 |---|---|---|---|
 | 09:13:24~09:14:04 | oom before-1·2 (동시) | 둘 다 32초, exit 137, `SELF-TERMINATED` 줄 기록됨 | 워커 PID 24 / 31. launch.sh 수정이 효과를 냈다 |
-| 09:14:04~09:14:32 | oom low128-1·2 (동시) | 둘 다 18초, `Memory limit exceeded (150MB >= 128MB)` | 생존 시간이 한도에 비례 |
+| 09:14:04~09:14:32 | oom low128-1·2 (동시) | 둘 다 18초, `Memory limit exceeded (150MB >= 128MB)` | 한도가 작을수록 일찍 죽음(선형, 정비례 아님) |
 | 09:14:32~09:19:43 | oom after-1·2 (동시) | 둘 다 300초 시간 제한까지 생존, cleanup 4회씩 | RSS 가 516.7MB 까지 올랐다가 정리 후 다시 오르는 톱니 모양 |
-| 09:19:43~09:24:00 | deadlock before-1·2 (동시) | 기동 9초 뒤 로그 정지, 246초 동안 CPU 0.0%, 스레드 3개 `futex_wait_queue` | before-1 은 09:21 경 RSS 16.5→13.2MB. RssAnon 은 그대로, RssFile 만 감소(커널의 파일 페이지 회수) |
+| 09:19:43~09:24:00 | deadlock before-1·2 (동시) | 기동 9초 뒤 로그 정지, 246초 동안 CPU 0.0%, 스레드 3개 `futex_wait_queue` | before-1 은 09:21 경 RSS 16.5→13.2MB. RssAnon 은 그대로, RssFile 만 감소(커널의 파일 페이지 회수로 추정, 직접 증거 없음) |
 | 09:24:00~09:28:11 | deadlock after-1·2 (동시) | 241초 동안 로그 계속, LOG_AGE 최대 3초 | 워커 스레드 utime·stime 증가, wchan `do_select` |
 | 09:28:11~09:29:39 | cpu before-1 → before-2 (단독, 순차) | 43초 / 34초, `CPU Threshold Violated!` → `WATCHDOG … (SIGTERM)`, exit 143 | OS 실측 CPU 는 0.0→2.0% 로 조금만 상승 |
 | 09:29:39~09:39:59 | cpu after-1 → after-2 (단독, 순차) | 둘 다 300초 시간 제한까지 생존, `Peak reached (50.00%)` 5회씩 | WATCHDOG 0건 |

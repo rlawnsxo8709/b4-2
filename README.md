@@ -39,7 +39,7 @@
 | **CPU** | `CPU_MAX_OCCUPY` | 80 → **43초 / 34초** 만에 Watchdog 자체 종료(exit 143) | 50 → **305초 이상 / 305초 이상** 생존(시간 제한) | 앱 Load 5%→56.38% · `CPU Threshold Violated!` · `WATCHDOG: INITIATING EMERGENCY ABORT (SIGTERM)` |
 | **Deadlock** | `MULTI_THREAD_ENABLE` | true → 기동 9초 뒤 로그 정지, **LOG_AGE 232초 / 237초까지 무응답**(PID 생존) | false → **241초 동안 정상 진행**, 로그 정지 최대 3초 | CPU 0.0% · 스레드 3개 `futex_wait_queue` · `WAITING for […] (Status: BLOCKED)` 순환 |
 
-보조 실험: `MEMORY_LIMIT=128` 은 18초 / 18초. 누수 속도가 일정해서 생존 시간이 한도에 비례한다.
+보조 실험: `MEMORY_LIMIT=128` 은 18초 / 18초. 누수 속도가 일정해서 한도가 클수록 생존 시간이 길어진다(절편이 있는 선형 관계라 정비례는 아니다).
 
 ## 실행 환경
 
@@ -126,7 +126,7 @@ monitor.sh [-p PATTERN] [-i INTERVAL_SEC] [-o LOG_FILE] [-l APP_LOG] [-n COUNT] 
 | STATE | `/proc/PID/stat` 3번째 필드 | 교착 시 계속 `S` |
 | LOG_AGE | 현재 시각 − `stat -c %Y APP_LOG` | "살아 있지만 멈춤"을 숫자로 보여 준다(교착 시 5초마다 5씩 증가) |
 
-알려진 동작: 기동 직후 첫 샘플은 워커가 아직 뜨기 전이라 런처 PID 를 잡을 수 있다(예: `PID:17 … RSS:1.7MB`). 다음 샘플부터는 워커를 잡는다.
+알려진 동작: 기동 직후 첫 샘플은 워커가 아직 뜨기 전이라 런처 PID 를 잡을 수 있다(예: `PID:17 … RSS:1.7MB`). 다음 샘플부터는 워커를 잡는다. 이 런처 샘플 때문에 이번 증거의 summary `peak_cpu_pct` 일부가 런처 값(2.0%)이 됐다. 지금의 run-case.sh 는 워커 PID 샘플만으로 피크를 계산한다.
 
 ## 증거 폴더 인덱스
 
@@ -134,7 +134,7 @@ monitor.sh [-p PATTERN] [-i INTERVAL_SEC] [-o LOG_FILE] [-l APP_LOG] [-n COUNT] 
 
 | 파일 | 내용 |
 |---|---|
-| `summary.txt` | 명령줄, 덮어쓴 env, 시작·종료 시각, **생존 시간**, **종료 원인**(자체 종료/시간 초과 중단 + exit code), 워커·런처 PID, 피크 RSS·CPU, 핵심 로그 줄, 앱 로그 마지막 15줄 |
+| `summary.txt` | 명령줄, 덮어쓴 env, 시작·종료 시각, **생존 시간**, **종료 원인**(자체 종료/시간 초과 중단 + exit code), 워커·런처 PID, 피크 RSS·CPU, 핵심 로그 줄, 앱 로그 마지막 15줄. ※ 이번 증거의 `peak_cpu_pct` 는 런처의 첫 샘플을 포함해 계산된 경우가 있다(oom/before-2, low128-1·2, deadlock/before-1). 리포트의 CPU 수치는 monitor.log 에서 워커 PID 샘플만으로 다시 계산했다. 이후 실행용으로 run-case.sh 는 수정했다 |
 | `app.log` | 앱 stdout+stderr (의사 터미널 출력, `\r` 제거) |
 | `monitor.log` | monitor.sh 5초 간격 기록 |
 | `exit.txt` | `exit_code=… ended_at=…` |
@@ -193,7 +193,7 @@ monitor.sh [-p PATTERN] [-i INTERVAL_SEC] [-o LOG_FILE] [-l APP_LOG] [-n COUNT] 
 
 1. **CPU 케이스의 방향.** 낮은 `CPU_MAX_OCCUPY` 가 와치독을 일으키는 것이 아니었다. **50 을 넘는 값**에서 `WARNING: Recommend Under 50%` 와 함께 와치독 동작이 선택되고, 50 이하로 낮추면 회피된다. 그래서 Before=80, After=50 이다.
 2. **CPU "급상승"은 앱 내부 지표다.** 앱 로그의 `Current Load` 는 5%→56% 로 오르지만, 같은 시간 OS 가 잰 워커의 CPU 는 0.0→2.0%(monitor), `top -H` 0.0%, 누적 CPU 시간 0.41초(40초 동안)였다. 리포트에는 두 값을 나란히 적었다.
-3. **OOM 의 After 는 "더 오래 버팀"이 아니라 "다른 대응".** 257MB 이상이면 앱이 `Healthy System Monitoring` 동작을 고른다. 이때는 한도에서 `Starting cleanup… MEMORY RECOVERED` 로 메모리를 비우고 계속 산다. 미션 예시처럼 "10분 → 30분"으로 종료가 늦춰지는 모양이 아니었다. 256MB 이하에서는 약 3초당 25MB 씩 늘어 한도에 비례한 시간(128MB 18초, 256MB 32초)에 죽는다.
+3. **OOM 의 After 는 "더 오래 버팀"이 아니라 "다른 대응".** 257MB 이상이면 앱이 `Healthy System Monitoring` 동작을 고른다. 이때는 한도에서 `Starting cleanup… MEMORY RECOVERED` 로 메모리를 비우고 계속 산다. 미션 예시처럼 "10분 → 30분"으로 종료가 늦춰지는 모양이 아니었다. 256MB 이하에서는 약 3초당 25MB 씩 늘어, 한도가 클수록 늦게 죽는다(128MB 18초, 256MB 32초. 선형이지만 정비례는 아니다).
 4. **설정 우선순위.** `MEMORY_LIMIT≤256` 이면 `MULTI_THREAD_ENABLE=true` 여도 OOM 이 먼저 일어난다(`evidence/00-explore/b-multithread/`). 그래서 CPU·Deadlock 케이스는 `MEMORY_LIMIT=512` 로 고정했다.
 5. **`SELF-TERMINATED` 줄은 터미널에서만 보인다.** 출력을 파일로 보내면 SIGKILL 직전의 stdout 버퍼가 비워지지 않아 이 줄이 사라진다(`boot.txt` vs `oom-256-tty.txt`). 그래서 run-case.sh 는 앱을 의사 터미널(`script`) 안에서 실행한다.
 6. **종료 시간.** 미션 예시는 "약 10분"이지만 이 바이너리·설정에서 OOM 은 32초, 와치독은 34~43초 만에 일어났다.
@@ -204,7 +204,7 @@ monitor.sh [-p PATTERN] [-i INTERVAL_SEC] [-o LOG_FILE] [-l APP_LOG] [-n COUNT] 
 
 | 개선 | 이번 증거에 비추어 |
 |---|---|
-| RSS 증가 기울기(MB/분)와 "한도 도달 예상 시각" 계산 → 임계치 전에 경보 | OOM before 는 8.0MB/s 로 일정했다. 워커의 처음 3샘플(10초 구간)만으로 종료 1초 전 시점을 예측할 수 있었다(EXPLAIN.md 5-1) |
+| RSS 증가 기울기(MB/분)와 "한도 도달 예상 시각" 계산 → 임계치 전에 경보 | OOM before 는 8.0MB/s 로 일정했다. Heap 증가 시작 후 첫 3샘플(09:13:30~40)만으로 종료 시점을 1~2초 오차로 근사 예측할 수 있었다(EXPLAIN.md 5-1) |
 | LOG_AGE > N초 + CPU≈0 + PID 생존 → "hang" 경보와 `ps -L -o wchan` 자동 수집 | Deadlock 은 LOG_AGE 만 단조 증가하고 나머지는 평평했다 |
 | 앱 자체 지표(로그의 Load·Heap)와 OS 실측의 차이 경보 | CPU 케이스에서 앱 Load 56% vs 실측 2% |
 | 비정상 종료 시 종료 코드·직전 로그 tail 을 함께 남기기 | 지금은 `NOT_RUNNING` 만 남고, 원인은 run-case.sh 가 따로 모은다 |
@@ -216,7 +216,7 @@ monitor.sh [-p PATTERN] [-i INTERVAL_SEC] [-o LOG_FILE] [-l APP_LOG] [-n COUNT] 
 |---|---|
 | `bash tests/test_monitor.sh` (호스트) | `PASS 9 / FAIL 0` (`evidence/tdd/green-host.txt`) |
 | `docker run --rm --cpus=2 --memory=2g --pids-limit=512 -v "$PWD:/w:ro" -w /w b4-2-lab bash tests/test_monitor.sh` | `PASS 9 / FAIL 0` (`evidence/tdd/green-container.txt`) |
-| TDD 순서 | 테스트 먼저 커밋. 구현 전 `PASS 0 / FAIL 8`. `pick_worker` 는 탐색 후 추가, 첫 구현에서 FAIL 확인 후 수정(WORKLOG.md 3장). test 커밋 시점 재실행 결과 `PASS 0 / FAIL 9`(`evidence/tdd/red-at-test-commit.txt`) |
+| TDD 순서 | 테스트 먼저 커밋. 구현 전 `PASS 0 / FAIL 8`(터미널 확인, 원본 미보존). `pick_worker` 는 탐색 후 추가, 첫 구현에서 FAIL 확인 후 수정(WORKLOG.md 3장). 보관된 증거는 test 커밋 시점 재실행 결과 `PASS 0 / FAIL 9`(`evidence/tdd/red-at-test-commit.txt`) |
 | `shellcheck -f gcc`(koalaman/shellcheck:stable) monitor.sh·env/*.sh | 지적 0건. `env/snapshot.sh` 의 SC2009(`ps -ef \| grep`)는 미션이 요구하는 증거 형식이라 유지 |
 | `bash -n` 전체 스크립트 | 통과 |
 | `env/run-case.sh smoke …` | summary·로그·스냅샷 생성, 종료 후 b42-* 컨테이너 없음 |

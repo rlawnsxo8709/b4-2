@@ -22,7 +22,7 @@
 
 ## 2. Evidence & Logs (증거 자료)
 
-### 2-1. monitor.sh — RSS 가 시간에 비례해 증가
+### 2-1. monitor.sh — RSS 가 시간에 따라 선형으로 증가
 
 `evidence/oom/before-1/monitor.log` (전체):
 
@@ -133,19 +133,19 @@ Killed
 env/run-case.sh oom after-1 --timeout 300 --snap-every 60 MEMORY_LIMIT=512 CPU_MAX_OCCUPY=50 MULTI_THREAD_ENABLE=false
 ```
 
-**Before & After** (각 `evidence/oom/<label>/summary.txt`)
+**Before & After** (생존 시간·종료 원인·피크 RSS 는 각 `evidence/oom/<label>/summary.txt`. 피크 CPU 는 `monitor.log` 에서 **워커 PID 샘플만**으로 다시 계산한 값이다. summary 의 `peak_cpu_pct` 는 런처의 첫 샘플(`PID:17 CPU:2.0% RSS:1.7MB`)을 포함한 경우가 있어 쓰지 않았다)
 
-| 실행 | 설정값 | 생존 시간 | 종료 원인 | 피크 RSS | 피크 CPU |
+| 실행 | 설정값 | 생존 시간 | 종료 원인 | 피크 RSS | 피크 CPU (워커) |
 |---|---|---|---|---|---|
 | before-1 | `MEMORY_LIMIT=256` | **32초** | MemoryGuard 자체 종료, exit 137 (SIGKILL) | 266.4MB | 8.0% (기동 직후) |
-| before-2 | `MEMORY_LIMIT=256` | **32초** | MemoryGuard 자체 종료, exit 137 (SIGKILL) | 266.4MB | 2.0% |
-| after-1 | `MEMORY_LIMIT=512` | **303초 이상** | 종료 없음 → 시간 제한에서 run-case.sh 가 TERM(exit 143) | 516.7MB | 4.0% |
-| after-2 | `MEMORY_LIMIT=512` | **303초 이상** | 종료 없음 → 시간 제한에서 run-case.sh 가 TERM(exit 143) | 516.7MB | 4.0% |
-| (보조) low128-1 | `MEMORY_LIMIT=128` | 18초 | `Memory limit exceeded (150MB >= 128MB)`, exit 137 | 141.4MB | 2.0% |
-| (보조) low128-2 | `MEMORY_LIMIT=128` | 18초 | `Memory limit exceeded (150MB >= 128MB)`, exit 137 | 141.4MB | 2.0% |
+| before-2 | `MEMORY_LIMIT=256` | **32초** | MemoryGuard 자체 종료, exit 137 (SIGKILL) | 266.4MB | 0.4% |
+| after-1 | `MEMORY_LIMIT=512` | **303초 이상** | 종료 없음 → 시간 제한에서 run-case.sh 가 TERM(exit 143) | 516.7MB | 4.0% (기동 직후) |
+| after-2 | `MEMORY_LIMIT=512` | **303초 이상** | 종료 없음 → 시간 제한에서 run-case.sh 가 TERM(exit 143) | 516.7MB | 4.0% (기동 직후) |
+| (보조) low128-1 | `MEMORY_LIMIT=128` | 18초 | `Memory limit exceeded (150MB >= 128MB)`, exit 137 | 141.4MB | 0.4% |
+| (보조) low128-2 | `MEMORY_LIMIT=128` | 18초 | `Memory limit exceeded (150MB >= 128MB)`, exit 137 | 141.4MB | 0.6% |
 
 - 생존 시간은 Before 평균 32초에서 After 303초 이상으로 늘었다(303÷32 ≈ 9.5배 이상). After 는 시간 제한까지 죽지 않았다.
-- 보조 실험: 같은 OOM 동작 안에서 128MB 는 18초, 256MB 는 32초였다. 누수 속도가 일정하다. 그래서 한도를 올리면 **종료 시점이 뒤로 밀릴 뿐** 결국 도달한다는 점을 보여 준다.
+- 보조 실험: 같은 OOM 동작 안에서 128MB 는 18초, 256MB 는 32초였다. 누수 속도가 일정하다는 뜻이다(한도와 생존 시간은 선형이지만 정비례는 아니다). 그래서 **256MB 이하의 OOM 동작 안에서는** 한도를 올려도 종료 시점이 뒤로 밀릴 뿐 결국 도달한다. 512MB 에서 죽지 않은 이유는 아래처럼 앱이 다른 동작을 골랐기 때문이다.
 
 **After 에서 실제로 일어난 일 — 같은 누수, 다른 대응.** 512MB 에서도 Heap 은 똑같이 25MB 씩 늘었다. 다만 한도에서 종료하지 않고 캐시를 비웠다(`evidence/oom/after-1/app.log`).
 
