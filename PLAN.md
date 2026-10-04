@@ -1,7 +1,7 @@
 # b4-2 수행 계획 — agent-leak-app 장애 3종(OOM · CPU · Deadlock) 실측 분석
 
 > 작성일: 2026-10-04 / 대상: b4-2 「컴퓨터가 갑자기 느려지거나 멈췄을 때 원인 찾아 고치기」 미션
-> 상태: 초안. 실험 매트릭스는 탐색 실행 후 확정해 이 문서에 추가한다.
+> 상태: 탐색 실행 후 실험 매트릭스 확정(6장), 실험 완료 후 결과 기록(7장).
 
 ## 1. 목표
 
@@ -52,3 +52,53 @@
 4. 실험 실행기 `env/run-case.sh`
 5. OOM → CPU(단독) → Deadlock 순서로 실험
 6. 리포트 3건과 문서 작성, 병합
+
+## 6. 탐색 결과와 확정한 실험 매트릭스
+
+### 6.1 탐색에서 확인한 사실 (근거: `evidence/00-explore/`, 상세 과정은 WORKLOG.md)
+
+| # | 관찰 | 근거 |
+|---|---|---|
+| 1 | 기본값(`env/agent.env`)으로 첫 시도에 부트 6단계 모두 `[OK]`. `AGENT_KEY_PATH`는 **디렉터리**(`$AGENT_HOME/api_keys`)여야 한다 | `boot.txt`, `boot-fail-keypath.txt`(`Key Path Mismatch. Expected: /home/agent/agent-app/api_keys`) |
+| 2 | root 실행, `MEMORY_LIMIT=600`, secret.key 내용 불일치는 부트 단계에서 `[FAIL]` → `System Boot Failed`(exit 1) | `boot-fail-*.txt` |
+| 3 | 앱은 같은 명령줄의 **런처(부모) + 워커(자식)** 2개 프로세스로 뜬다. 메모리·스레드·nice=10 은 워커에만 나타난다 | `a-default/snapshots/*-ps-ef.txt` |
+| 4 | 출력이 파일이면 `>>> [SYSTEM] SELF-TERMINATED …` 줄이 사라진다. 의사 터미널로 실행하면 나타난다(자체 SIGKILL 직전 stdout 버퍼가 비워지지 않음) | `boot.txt` vs `oom-256-tty.txt` |
+| 5 | 앱은 시작할 때 설정값으로 **시나리오 하나를 고른다**. `MEMORY_LIMIT≤256` → OOM(`MULTI_THREAD_ENABLE=true` 와 함께여도 OOM 이 먼저), `CPU_MAX_OCCUPY>50` → Watchdog, `MULTI_THREAD_ENABLE=true` → Deadlock, 모두 권장 범위(257MB 이상·50% 이하·false)면 `Healthy System Monitoring`. 256MB 와 CPU 50 초과를 함께 준 조합은 시험하지 않았다 | `a-default`, `b-multithread`, `c-cpu10`, `b2-multithread-mem512`, `d-mem384`, `e-cpu80-mem512`, `probe-banner.txt` |
+| 6 | OOM 시나리오: Heap 이 약 3초마다 25MB 씩 늘고, `MEMORY_LIMIT` 을 넘는 순간 `Memory limit exceeded` → 자체 SIGKILL(exit 137). 256MB 에서 약 32초 | `a-default/app.log` |
+| 7 | Healthy 시나리오(257MB 이상): Heap 이 한도에 닿으면 `Memory Usage Reached Limit … Starting cleanup` → `MEMORY RECOVERED` 후 25MB 부터 다시 증가. 종료되지 않는다 | `d-mem384/app.log` |
+| 8 | Watchdog 시나리오: 앱이 로그로 보고하는 `[CpuWorker] Current Load` 가 5%부터 오르다 **50%를 넘는 순간** `CPU Threshold Violated!` → `WATCHDOG: INITIATING EMERGENCY ABORT (SIGTERM)`(exit 143). `CPU_MAX_OCCUPY≤50` 이면 그 값에서 `Peak reached … Starting cooldown` 후 다시 내려간다 | `e-cpu80-mem512/app.log`, `manual-512-healthy.app.log` |
+| 9 | **그러나 OS 에서 잰 실제 CPU 는 오르지 않는다.** 같은 시간 monitor.sh 는 기동 직후 첫 샘플 8.0%를 빼면 0.2~1.2%, `top -H` 0.0%, `docker stats` 0.01~1.43% | `e-cpu80-mem512/monitor.log`, `snapshots/` |
+| 10 | Deadlock 시나리오: 시작 약 7초 뒤 Worker-Thread-1/2 가 서로의 자원을 기다리는 `WAITING … (Status: BLOCKED)` 2줄을 마지막으로 로그 정지. PID 생존, CPU 0.0%, RSS 16.5MB 고정, 스레드 3개 모두 `futex_wait_queue` | `b2-multithread-mem512/` |
+
+**미션 문서·계획과 다른 점:** CPU 케이스는 "낮은 값이 와치독을 일으킨다"가 아니었다. `CPU_MAX_OCCUPY` 를 **50보다 높이면** 와치독이 발동하고, 50 이하로 **낮추면** 회피된다. 그래서 Before 를 높은 값(80), After 를 50 으로 정했다.
+
+### 6.2 실험 매트릭스 (실행: `env/run-matrix.sh`)
+
+다른 장애가 끼어들지 않도록 케이스의 변수 하나만 바꾸고 나머지는 고정한다. 고정값은 "경고 없음" 값이다(`MEMORY_LIMIT=512`, `CPU_MAX_OCCUPY=50`, `MULTI_THREAD_ENABLE=false`).
+
+| 케이스 | 변경 변수 | Before | After | 고정값 | 시간 제한 | 반복 | 스냅샷 간격 |
+|---|---|---|---|---|---|---|---|
+| OOM | `MEMORY_LIMIT` | 256 | 512 | CPU 50, MT false | 300초 (Before 평균 약 32초의 9배) | 각 2회 (동시 2컨테이너) | Before 10초 / After 60초 |
+| OOM 보조 | `MEMORY_LIMIT` | 128 | — | CPU 50, MT false | 300초 | 2회 | 10초 |
+| CPU | `CPU_MAX_OCCUPY` | 80 | 50 | MEM 512, MT false | 300초 (Before 약 40초의 7배) | 각 2회 (**단독, 순차**) | Before 10초 / After 30초 |
+| Deadlock | `MULTI_THREAD_ENABLE` | true | false | MEM 512, CPU 50 | 240초 (정지 후 3분 이상 관찰) | 각 2회 (동시 2컨테이너) | 30초 |
+
+- OOM 보조(128MB)는 같은 OOM 시나리오 안에서 한도와 생존 시간이 비례하는지(누수 속도 일정) 확인하기 위한 것이다.
+- 예상 실험 시간: OOM 약 7분 + Deadlock 약 9분 + CPU 약 12분 ≈ 28분 (탐색 약 20분 포함 시 90분 예산 안).
+
+## 7. 실험 결과 (실행: 2026-10-04 09:13:24 ~ 09:39:59, `env/run-matrix.sh`)
+
+| 케이스 | 실행 | 설정 | 생존(관찰) 시간 | 종료 원인 | 핵심 로그 |
+|---|---|---|---|---|---|
+| OOM | before-1 / before-2 | `MEMORY_LIMIT=256` | 32초 / 32초 | 자체 종료 exit 137 (SIGKILL) | `Memory limit exceeded (275MB >= 256MB)` → `SELF-TERMINATED (Memory Limit Exceeded)` |
+| OOM | low128-1 / low128-2 (보조) | `MEMORY_LIMIT=128` | 18초 / 18초 | 자체 종료 exit 137 | `Memory limit exceeded (150MB >= 128MB)` |
+| OOM | after-1 / after-2 | `MEMORY_LIMIT=512` | 303초+ / 303초+ | 시간 제한 중단(생존) | `Memory Usage Reached Limit (525MB). Starting cleanup...` 4회씩 |
+| CPU | before-1 / before-2 | `CPU_MAX_OCCUPY=80` | 43초 / 34초 | 자체 종료 exit 143 (SIGTERM) | `CPU Threshold Violated! (56.38%)` / `(52.39…%)` → `WATCHDOG: INITIATING EMERGENCY ABORT (SIGTERM)` |
+| CPU | after-1 / after-2 | `CPU_MAX_OCCUPY=50` | 305초+ / 305초+ | 시간 제한 중단(생존) | `Peak reached (50.00%). Starting cooldown...` 5회씩, WATCHDOG 0건 |
+| Deadlock | before-1 / before-2 | `MULTI_THREAD_ENABLE=true` | 246초 / 246초 관찰 | 시간 제한 중단(무응답) | 기동 9초 뒤 `WAITING for [Socket_Pool_B]/[Shared_Memory_A]... (Status: BLOCKED)` 이후 로그 0줄 |
+| Deadlock | after-1 / after-2 | `MULTI_THREAD_ENABLE=false` | 241초 / 241초 관찰 | 시간 제한 중단(정상 진행) | `[Scheduler] All tasks completed.`, LOG_AGE 최대 3초, BLOCKED 0건 |
+
+- 실험 시간: 탐색 약 20분(04:37~04:57) + 매트릭스 26분 35초 = 약 47분. 90분 예산 안이다.
+- 같은 조건 2회는 모든 케이스에서 종료 양상(자체 종료·생존·무응답)이 같았다. CPU before 의 생존 시간만 43/34초로 달랐다. 앱이 보고하는 부하 증가 폭이 실행마다 달라 50%를 넘는 시점이 달라졌기 때문이다.
+- 증거 총량: `du -sh evidence` = 4.7M (50MB 기준 이하).
+- 케이스별 상세 분석은 `issues/01-oom.md`, `issues/02-cpu.md`, `issues/03-deadlock.md`.

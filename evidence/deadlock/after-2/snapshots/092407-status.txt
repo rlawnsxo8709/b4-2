@@ -1,0 +1,61 @@
+# 2026-10-04 09:24:07 (PID 23)
+$ cat /proc/23/status
+Name:	agent-leak-app
+Umask:	0022
+State:	S (sleeping)
+Tgid:	23
+Ngid:	0
+Pid:	23
+PPid:	16
+TracerPid:	0
+Uid:	1001	1001	1001	1001
+Gid:	1001	1001	1001	1001
+FDSize:	64
+Groups:	1001 
+NStgid:	23
+NSpid:	23
+NSpgid:	15
+NSsid:	15
+Kthread:	0
+VmPeak:	  261068 kB
+VmSize:	  196556 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	   42596 kB
+VmRSS:	   42596 kB
+RssAnon:	   33956 kB
+RssFile:	    8640 kB
+RssShmem:	       0 kB
+VmData:	   51976 kB
+VmStk:	     132 kB
+VmExe:	      52 kB
+VmLib:	   11904 kB
+VmPTE:	     148 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+THP_enabled:	1
+untag_mask:	0xffffffffffffff
+Threads:	3
+SigQ:	0/511872
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000000000
+SigIgn:	0000000001001000
+SigCgt:	0000000100000002
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	00000000a80425fb
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	2
+Seccomp_filters:	1
+Speculation_Store_Bypass:	thread vulnerable
+SpeculationIndirectBranch:	unknown
+Cpus_allowed:	fffff
+Cpus_allowed_list:	0-19
+Mems_allowed:	00000000,00000001
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	32
+nonvoluntary_ctxt_switches:	5

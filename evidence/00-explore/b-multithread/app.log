@@ -1,0 +1,47 @@
+>>> Starting Agent Boot Sequence...
+[1/6] Checking User Account               [OK]
+   ... Running as service user 'agent' (uid=1001)
+[2/6] Verifying Environment Variables     [OK]
+   ... All required Envs correct
+[3/6] Checking Required Files             [OK]
+   ... Verified 'secret.key' with correct key string.
+[4/6] Checking Port Availability          [OK]
+   ... Port 15034 is available.
+[5/6] Verifying Log Permission            [OK]
+   ... Log directory is writable: /var/log/agent-app
+[6/6] Verifying Mission Environment       [OK]
+   ... MEMORY_LIMIT=256MB, CPU_MAX_OCCUPY=50%, MULTI_THREAD_ENABLE=True
+------------------------------------------------------------
+All Boot Checks Passed!
+Agent READY
+2026-10-04 04:47:44,369 [INFO] [SafetyGuard] Process priority lowered (nice=10).
+2026-10-04 04:47:44,369 [INFO] Agent listening at port 15034
+
+==================================================
+ [ Agent Initiate ] Resource Check 
+==================================================
+ [ MEMORY ] Limit: 256MB 		[ WARNING: Recommend Over 256MB ]
+ [ CPU    ] Limit: 50%  		[ OK ]
+ [ THREAD ] Concurrency: True 		[ WARNING ]
+--------------------------------------------------
+ >>> SYSTEM WARNING: POTENTIAL DEADLOCK IN CONCURRENT MODE.
+==================================================
+
+2026-10-04 04:47:46,397 [INFO] [MemoryWorker] Current Heap: 25MB
+2026-10-04 04:47:49,421 [INFO] [MemoryWorker] Current Heap: 50MB
+2026-10-04 04:47:52,462 [INFO] [MemoryWorker] Current Heap: 75MB
+2026-10-04 04:47:55,492 [INFO] [MemoryWorker] Current Heap: 100MB
+2026-10-04 04:47:58,506 [INFO] [MemoryWorker] Current Heap: 125MB
+2026-10-04 04:48:01,517 [INFO] [MemoryWorker] Current Heap: 150MB
+2026-10-04 04:48:04,526 [INFO] [MemoryWorker] Current Heap: 175MB
+2026-10-04 04:48:07,542 [INFO] [MemoryWorker] Current Heap: 200MB
+2026-10-04 04:48:10,565 [INFO] [MemoryWorker] Current Heap: 225MB
+2026-10-04 04:48:13,589 [INFO] [MemoryWorker] Current Heap: 250MB
+2026-10-04 04:48:16,613 [INFO] [MemoryWorker] Current Heap: 275MB
+2026-10-04 04:48:16,613 [CRITICAL] [MemoryGuard] Memory limit exceeded (275MB >= 256MB) / (Recommend Over 256MB)
+2026-10-04 04:48:16,613 [CRITICAL] [MemoryGuard] Self-terminating process 29 to prevent system instability.
+
+
+>>> [SYSTEM] SELF-TERMINATED (Memory Limit Exceeded) <<<
+
+Killed

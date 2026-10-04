@@ -1,0 +1,17 @@
+# 2026-10-04 04:47:49 (PID 29)
+$ top -b -n 1 -o %CPU | head -15
+top - 04:47:50 up 88 days,  7:51,  0 user,  load average: 0.80, 0.54, 0.53
+Tasks:  12 total,   1 running,  11 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  6.8 us,  0.5 sy,  0.0 ni, 92.7 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st 
+MiB Mem : 122506.4 total,  41063.4 free,  70410.5 used,  12842.9 buff/cache     
+MiB Swap:  16384.0 total,   5173.5 free,  11210.5 used.  52095.9 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+      1 root      20   0     876    592    544 S   0.0   0.0   0:00.00 docker-+
+      6 root      20   0    2272   1196   1116 S   0.0   0.0   0:00.00 sleep
+      7 agent     20   0    4036   2992   2740 S   0.0   0.0   0:00.00 bash
+     14 agent     20   0    2296   1548   1444 S   0.0   0.0   0:00.00 script
+     15 agent     20   0    2384   1556   1468 S   0.0   0.0   0:00.00 sh
+     16 agent     20   0    2792   1784   1576 S   0.0   0.0   0:00.04 agent-l+
+     17 agent     20   0    4168   3184   2740 S   0.0   0.0   0:00.02 bash
+     29 agent     30  10   73552  67988   8648 S   0.0   0.1   0:00.07 agent-l+

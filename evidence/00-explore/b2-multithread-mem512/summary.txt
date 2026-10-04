@@ -1,0 +1,45 @@
+case:          00-explore
+label:         b2-multithread-mem512
+command:       env/run-case.sh 00-explore b2-multithread-mem512 --timeout 420 --snap-every 15 MEMORY_LIMIT=512 MULTI_THREAD_ENABLE=true
+overrides:     MEMORY_LIMIT=512 MULTI_THREAD_ENABLE=true
+container:     b42-00-explore-b2-multithread-mem512 (--cpus=2 --memory=2g --pids-limit=512 --network none, image b4-2-lab:latest)
+started_at:    2026-10-04 04:49:29
+ended_at:      2026-10-04 04:56:36
+survival_sec:  427
+end_cause:     시간 초과 중단(생존 중 중단, --timeout 420s) → exit_code=143 (SIGTERM, run-case.sh 가 보냄)
+pid:           worker=30 launcher=17
+peak_rss_mb:   16.5 ([2026-10-04 04:49:40])
+peak_cpu_pct:  2.0 ([2026-10-04 04:49:30])
+monitor_lines: 87
+snapshots:     27 시점 (snapshots/*-ps-ef.txt 기준)
+
+--- env.txt
+AGENT_HOME=/home/agent/agent-app
+AGENT_PORT=15034
+AGENT_UPLOAD_DIR=/home/agent/agent-app/upload_files
+AGENT_KEY_PATH=/home/agent/agent-app/api_keys
+AGENT_LOG_DIR=/var/log/agent-app
+MEMORY_LIMIT=512
+CPU_MAX_OCCUPY=50
+MULTI_THREAD_ENABLE=true
+
+--- 핵심 로그 (grep -nE 'Scenario|Memory limit|Self-terminat|SELF-TERMINATED|WATCHDOG|BLOCKED|WAITING|Deadlock|RECOVERED' app.log)
+40:2026-10-04 04:49:38,645 [INFO] [AgentWorker][Worker-Thread-2] WAITING for [Shared_Memory_A]... (Status: BLOCKED)
+42:2026-10-04 04:49:38,650 [INFO] [AgentWorker][Worker-Thread-1] WAITING for [Socket_Pool_B]... (Status: BLOCKED)
+
+--- app.log 마지막 15줄
+
+2026-10-04 04:49:31,612 [WARNING] [AgentWorker] Initializing concurrent transaction processors...
+2026-10-04 04:49:31,612 [WARNING] [System] CAUTION: Strict resource locking is enabled.
+2026-10-04 04:49:36,638 [INFO] [Worker-Thread-1] Process Started. Attempting to lock [Shared_Memory_A]...
+2026-10-04 04:49:36,638 [INFO] [AgentWorker][Worker-Thread-2] Process Started. Attempting to lock [Socket_Pool_B]...
+2026-10-04 04:49:36,639 [INFO] [AgentWorker] Waiting for worker threads to complete transactions...
+2026-10-04 04:49:36,639 [INFO] [AgentWorker][Worker-Thread-1] LOCK ACQUIRED: [Shared_Memory_A]. (Holding...)
+2026-10-04 04:49:36,639 [INFO] [AgentWorker][Worker-Thread-2] LOCK ACQUIRED: [Socket_Pool_B]. (Holding...)
+2026-10-04 04:49:36,639 [INFO] [AgentWorker][Worker-Thread-1] Processing critical data in Memory A...
+2026-10-04 04:49:36,639 [INFO] [AgentWorker][Worker-Thread-2] Establishing network connections in Pool B...
+2026-10-04 04:49:38,645 [INFO] [AgentWorker][Worker-Thread-2] Need resource [Shared_Memory_A] to write logs.
+2026-10-04 04:49:38,645 [INFO] [AgentWorker][Worker-Thread-2] WAITING for [Shared_Memory_A]... (Status: BLOCKED)
+2026-10-04 04:49:38,650 [INFO] [AgentWorker][Worker-Thread-1] Need resource [Socket_Pool_B] to finish job.
+2026-10-04 04:49:38,650 [INFO] [AgentWorker][Worker-Thread-1] WAITING for [Socket_Pool_B]... (Status: BLOCKED)
+Terminated

@@ -1,0 +1,19 @@
+# AGENT_KEY_PATH=/home/agent/agent-app/no_such_dir (존재하지 않는 경로)
+$ date: 2026-10-04 04:38:29
+$ docker exec -u agent --env-file env/agent.env -e AGENT_KEY_PATH=/home/agent/agent-app/no_such_dir b42-explore timeout 20 /opt/agent/agent-leak-app
+>>> Starting Agent Boot Sequence...
+[1/6] Checking User Account               [OK]
+   ... Running as service user 'agent' (uid=1001)
+[2/6] Verifying Environment Variables     [FAIL]
+   >>> Key Path Mismatch. Expected: /home/agent/agent-app/api_keys
+[3/6] Checking Required Files             [FAIL]
+   >>> Skipped due to previous critical failure.
+[4/6] Checking Port Availability          [FAIL]
+   >>> Skipped due to previous critical failure.
+[5/6] Verifying Log Permission            [FAIL]
+   >>> Skipped due to previous critical failure.
+[6/6] Verifying Mission Environment       [FAIL]
+   >>> Skipped due to previous critical failure.
+--------------------------------------------------
+System Boot Failed. Process Terminated.
+[exit code: 1]

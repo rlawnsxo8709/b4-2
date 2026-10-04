@@ -1,0 +1,32 @@
+# 2026-10-04 14:22:06 test 커밋(3222902) 시점을 별도 작업 트리로 꺼내 실행 — monitor.sh 가 없는 구현 전 상태 재현
+$ git worktree add --detach <tmp> 3222902 && cd <tmp> && bash tests/test_monitor.sh
+bash: monitor.sh: 그런 파일이나 디렉터리가 없습니다
+tail: '/tmp/tmp.Ot2t2qnWw3/m.log'을(를) 읽기 용도로 열 수 없습니다: 그런 파일이나 디렉터리가 없습니다
+FAIL format: 
+tests/test_monitor.sh: 행 10번: [: : 정수 표현식 필요함
+FAIL busy_cpu: 
+bash: monitor.sh: 그런 파일이나 디렉터리가 없습니다
+tail: '/tmp/tmp.Ot2t2qnWw3/m.log'을(를) 읽기 용도로 열 수 없습니다: 그런 파일이나 디렉터리가 없습니다
+tests/test_monitor.sh: 행 16번: [: : 정수 표현식 필요함
+FAIL idle_cpu: 
+tests/test_monitor.sh: 행 17번: [: : 정수 표현식 필요함
+FAIL log_age: 
+bash: monitor.sh: 그런 파일이나 디렉터리가 없습니다
+tail: '/tmp/tmp.Ot2t2qnWw3/m.log'을(를) 읽기 용도로 열 수 없습니다: 그런 파일이나 디렉터리가 없습니다
+tail: '/tmp/tmp.Ot2t2qnWw3/m.log'을(를) 읽기 용도로 열 수 없습니다: 그런 파일이나 디렉터리가 없습니다
+FAIL not_running: 
+FAIL rc0: 127
+tests/test_monitor.sh: 줄 22: /tmp/tmp.Ot2t2qnWw3/m.log: 그런 파일이나 디렉터리가 없습니다
+tests/test_monitor.sh: 행 22번: [: : 정수 표현식 필요함
+tests/test_monitor.sh: 줄 22: /tmp/tmp.Ot2t2qnWw3/m.log: 그런 파일이나 디렉터리가 없습니다
+FAIL append: 
+bash: monitor.sh: 그런 파일이나 디렉터리가 없습니다
+tests/test_monitor.sh: 줄 24: /tmp/tmp.Ot2t2qnWw3/n.log: 그런 파일이나 디렉터리가 없습니다
+tests/test_monitor.sh: 행 24번: [: : 정수 표현식 필요함
+tests/test_monitor.sh: 줄 24: /tmp/tmp.Ot2t2qnWw3/n.log: 그런 파일이나 디렉터리가 없습니다
+FAIL count: 
+bash: monitor.sh: 그런 파일이나 디렉터리가 없습니다
+tail: '/tmp/tmp.Ot2t2qnWw3/p.log'을(를) 읽기 용도로 열 수 없습니다: 그런 파일이나 디렉터리가 없습니다
+FAIL pick_worker: parent=1516998 child=1517000 got: 
+PASS 0 / FAIL 9
+[exit code: 1]

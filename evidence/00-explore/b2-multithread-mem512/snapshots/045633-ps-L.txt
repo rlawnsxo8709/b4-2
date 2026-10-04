@@ -1,0 +1,6 @@
+# 2026-10-04 04:56:33 (PID 30)
+$ ps -L -o pid,lwp,stat,pcpu,pmem,wchan:32,comm -p 30
+    PID     LWP STAT %CPU %MEM WCHAN                            COMMAND
+     30      30 SNl+  0.0  0.0 futex_wait_queue                 agent-leak-app
+     30     106 SNl+  0.0  0.0 futex_wait_queue                 agent-leak-app
+     30     107 SNl+  0.0  0.0 futex_wait_queue                 agent-leak-app

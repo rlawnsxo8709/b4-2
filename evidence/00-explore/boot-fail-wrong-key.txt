@@ -1,0 +1,20 @@
+# secret.key 내용을 wrong_key 로 바꾼 뒤 실행
+$ date: 2026-10-04 04:38:35
+$ docker exec -u agent --env-file env/agent.env b42-explore timeout 20 /opt/agent/agent-leak-app
+>>> Starting Agent Boot Sequence...
+[1/6] Checking User Account               [OK]
+   ... Running as service user 'agent' (uid=1001)
+[2/6] Verifying Environment Variables     [OK]
+   ... All required Envs correct
+[3/6] Checking Required Files             [FAIL]
+   >>> Invalid Content in secret.key
+   >>>    (Expected: 'agent_api_key_test', Found: 'wrong_key')
+[4/6] Checking Port Availability          [FAIL]
+   >>> Skipped due to previous critical failure.
+[5/6] Verifying Log Permission            [FAIL]
+   >>> Skipped due to previous critical failure.
+[6/6] Verifying Mission Environment       [FAIL]
+   >>> Skipped due to previous critical failure.
+--------------------------------------------------
+System Boot Failed. Process Terminated.
+[exit code: 1]

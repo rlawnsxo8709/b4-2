@@ -1,0 +1,4 @@
+# 2026-10-04 04:57:06
+$ docker stats --no-stream b42-00-explore-e-cpu80-mem512   (호스트에서 본 컨테이너 전체 사용량)
+NAME                            CPU %     MEM USAGE / LIMIT   MEM %     PIDS
+b42-00-explore-e-cpu80-mem512   1.43%     11.43MiB / 2GiB     0.56%     9

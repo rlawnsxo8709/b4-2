@@ -1,0 +1,46 @@
+case:          oom
+label:         low128-1
+command:       env/run-case.sh oom low128-1 --timeout 300 --snap-every 10 MEMORY_LIMIT=128 CPU_MAX_OCCUPY=50 MULTI_THREAD_ENABLE=false
+overrides:     MEMORY_LIMIT=128 CPU_MAX_OCCUPY=50 MULTI_THREAD_ENABLE=false
+container:     b42-oom-low128-1 (--cpus=2 --memory=2g --pids-limit=512 --network none, image b4-2-lab:latest)
+started_at:    2026-10-04 09:14:04
+ended_at:      2026-10-04 09:14:22
+survival_sec:  18
+end_cause:     자체 종료 → exit_code=137 (SIGKILL)
+pid:           worker=31 launcher=17
+peak_rss_mb:   141.4 ([2026-10-04 09:14:21])
+peak_cpu_pct:  2.0 ([2026-10-04 09:14:05])
+monitor_lines: 5
+snapshots:     2 시점 (snapshots/*-ps-ef.txt 기준)
+
+--- env.txt
+AGENT_HOME=/home/agent/agent-app
+AGENT_PORT=15034
+AGENT_UPLOAD_DIR=/home/agent/agent-app/upload_files
+AGENT_KEY_PATH=/home/agent/agent-app/api_keys
+AGENT_LOG_DIR=/var/log/agent-app
+MEMORY_LIMIT=128
+CPU_MAX_OCCUPY=50
+MULTI_THREAD_ENABLE=false
+
+--- 핵심 로그 (grep -nE 'Scenario|Memory limit|Self-terminat|SELF-TERMINATED|WATCHDOG|BLOCKED|WAITING|Deadlock|RECOVERED' app.log)
+36:2026-10-04 09:14:22,197 [CRITICAL] [MemoryGuard] Memory limit exceeded (150MB >= 128MB) / (Recommend Over 256MB)
+37:2026-10-04 09:14:22,197 [CRITICAL] [MemoryGuard] Self-terminating process 31 to prevent system instability.
+40:>>> [SYSTEM] SELF-TERMINATED (Memory Limit Exceeded) <<<
+
+--- app.log 마지막 15줄
+==================================================
+
+2026-10-04 09:14:07,109 [INFO] [MemoryWorker] Current Heap: 25MB
+2026-10-04 09:14:10,123 [INFO] [MemoryWorker] Current Heap: 50MB
+2026-10-04 09:14:13,144 [INFO] [MemoryWorker] Current Heap: 75MB
+2026-10-04 09:14:16,167 [INFO] [MemoryWorker] Current Heap: 100MB
+2026-10-04 09:14:19,189 [INFO] [MemoryWorker] Current Heap: 125MB
+2026-10-04 09:14:22,196 [INFO] [MemoryWorker] Current Heap: 150MB
+2026-10-04 09:14:22,197 [CRITICAL] [MemoryGuard] Memory limit exceeded (150MB >= 128MB) / (Recommend Over 256MB)
+2026-10-04 09:14:22,197 [CRITICAL] [MemoryGuard] Self-terminating process 31 to prevent system instability.
+
+
+>>> [SYSTEM] SELF-TERMINATED (Memory Limit Exceeded) <<<
+
+Killed

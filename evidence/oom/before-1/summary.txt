@@ -1,0 +1,46 @@
+case:          oom
+label:         before-1
+command:       env/run-case.sh oom before-1 --timeout 300 --snap-every 10 MEMORY_LIMIT=256 CPU_MAX_OCCUPY=50 MULTI_THREAD_ENABLE=false
+overrides:     MEMORY_LIMIT=256 CPU_MAX_OCCUPY=50 MULTI_THREAD_ENABLE=false
+container:     b42-oom-before-1 (--cpus=2 --memory=2g --pids-limit=512 --network none, image b4-2-lab:latest)
+started_at:    2026-10-04 09:13:24
+ended_at:      2026-10-04 09:13:56
+survival_sec:  32
+end_cause:     자체 종료 → exit_code=137 (SIGKILL)
+pid:           worker=24 launcher=17
+peak_rss_mb:   266.4 ([2026-10-04 09:13:55])
+peak_cpu_pct:  8.0 ([2026-10-04 09:13:24])
+monitor_lines: 8
+snapshots:     3 시점 (snapshots/*-ps-ef.txt 기준)
+
+--- env.txt
+AGENT_HOME=/home/agent/agent-app
+AGENT_PORT=15034
+AGENT_UPLOAD_DIR=/home/agent/agent-app/upload_files
+AGENT_KEY_PATH=/home/agent/agent-app/api_keys
+AGENT_LOG_DIR=/var/log/agent-app
+MEMORY_LIMIT=256
+CPU_MAX_OCCUPY=50
+MULTI_THREAD_ENABLE=false
+
+--- 핵심 로그 (grep -nE 'Scenario|Memory limit|Self-terminat|SELF-TERMINATED|WATCHDOG|BLOCKED|WAITING|Deadlock|RECOVERED' app.log)
+41:2026-10-04 09:13:56,746 [CRITICAL] [MemoryGuard] Memory limit exceeded (275MB >= 256MB) / (Recommend Over 256MB)
+42:2026-10-04 09:13:56,746 [CRITICAL] [MemoryGuard] Self-terminating process 24 to prevent system instability.
+45:>>> [SYSTEM] SELF-TERMINATED (Memory Limit Exceeded) <<<
+
+--- app.log 마지막 15줄
+2026-10-04 09:13:35,609 [INFO] [MemoryWorker] Current Heap: 100MB
+2026-10-04 09:13:38,632 [INFO] [MemoryWorker] Current Heap: 125MB
+2026-10-04 09:13:41,654 [INFO] [MemoryWorker] Current Heap: 150MB
+2026-10-04 09:13:44,671 [INFO] [MemoryWorker] Current Heap: 175MB
+2026-10-04 09:13:47,679 [INFO] [MemoryWorker] Current Heap: 200MB
+2026-10-04 09:13:50,701 [INFO] [MemoryWorker] Current Heap: 225MB
+2026-10-04 09:13:53,723 [INFO] [MemoryWorker] Current Heap: 250MB
+2026-10-04 09:13:56,745 [INFO] [MemoryWorker] Current Heap: 275MB
+2026-10-04 09:13:56,746 [CRITICAL] [MemoryGuard] Memory limit exceeded (275MB >= 256MB) / (Recommend Over 256MB)
+2026-10-04 09:13:56,746 [CRITICAL] [MemoryGuard] Self-terminating process 24 to prevent system instability.
+
+
+>>> [SYSTEM] SELF-TERMINATED (Memory Limit Exceeded) <<<
+
+Killed

@@ -1,0 +1,12 @@
+# 2026-10-04 09:25:41 (PID 30)
+$ top -H -b -n 1 -p 30
+top - 09:25:41 up 88 days, 12:29,  0 user,  load average: 2.00, 2.74, 2.00
+Threads:   3 total,   0 running,   3 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  9.5 us,  1.5 sy,  0.5 ni, 88.1 id,  0.5 wa,  0.0 hi,  0.0 si,  0.0 st 
+MiB Mem : 122506.4 total,   6184.5 free,  76150.6 used,  41981.9 buff/cache     
+MiB Swap:  16384.0 total,   5247.5 free,  11136.5 used.  46355.8 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+     30 agent     30  10  498632 298608   8632 S   0.0   0.2   0:00.03 agent-l+
+     41 agent     30  10  498632 298608   8632 S   0.0   0.2   0:00.27 agent-l+
+     42 agent     30  10  498632 298608   8632 S   0.0   0.2   0:00.84 agent-l+

@@ -1,0 +1,5 @@
+# 2026-10-04 09:14:23 (PID 31)
+$ grep . /proc/31/task/*/stat /proc/31/task/*/wchan
+grep: /proc/31/task/*/stat: No such file or directory
+grep: /proc/31/task/*/wchan: No such file or directory
+
