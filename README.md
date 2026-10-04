@@ -11,7 +11,7 @@
 | 관제 스크립트 | [monitor.sh](monitor.sh) (Bash, `/proc` 기반) · 테스트 [tests/test_monitor.sh](tests/test_monitor.sh) |
 | 실험 실행기 | [env/run-case.sh](env/run-case.sh) · [env/run-matrix.sh](env/run-matrix.sh) |
 
-설계와 실험 매트릭스는 [PLAN.md](PLAN.md), 시행착오 기록은 [WORKLOG.md](WORKLOG.md), 과제 목표·평가 문항 답변은 [EXPLAIN.md](EXPLAIN.md)에 있다.
+설계와 실험 매트릭스는 [PLAN.md](PLAN.md), 시행착오 기록은 [WORKLOG.md](WORKLOG.md)에 있다.
 
 ---
 
@@ -201,11 +201,11 @@ monitor.sh [-p PATTERN] [-i INTERVAL_SEC] [-o LOG_FILE] [-l APP_LOG] [-n COUNT] 
 
 ## monitor.sh 개선 방향
 
-운영 서버라면 장애 **전에** 알리도록 다음을 추가하겠다. 평가 문항 답변은 [EXPLAIN.md](EXPLAIN.md) 5장에 있다.
+운영 서버라면 장애 **전에** 알리도록 다음을 추가하겠다.
 
 | 개선 | 이번 증거에 비추어 |
 |---|---|
-| RSS 증가 기울기(MB/분)와 "한도 도달 예상 시각" 계산 → 임계치 전에 경보 | OOM before 는 09:13:30~55 구간에서 8.0MB/s 로 일정했다. Heap 증가 시작 후 첫 3샘플(09:13:30~40)만으로 종료 시점을 1~2초 오차로 근사 예측할 수 있었다(EXPLAIN.md 5-1) |
+| RSS 증가 기울기(MB/분)와 "한도 도달 예상 시각" 계산 → 임계치 전에 경보 | OOM before 는 09:13:30~55 구간에서 8.0MB/s 로 일정했다. Heap 증가 시작 후 첫 3샘플(09:13:30~40)만으로 종료 시점을 1~2초 오차로 근사 예측할 수 있었다 |
 | LOG_AGE > N초 + CPU≈0 + PID 생존 → "hang" 경보와 `ps -L -o wchan` 자동 수집 | Deadlock 은 LOG_AGE 만 단조 증가하고 나머지는 평평했다 |
 | 앱 자체 지표(로그의 Load·Heap)와 OS 실측의 차이 경보 | CPU 케이스에서 앱 Load 56% vs 실측 2% |
 | 비정상 종료 시 종료 코드·직전 로그 tail 을 함께 남기기 | 지금은 `NOT_RUNNING` 만 남고, 원인은 run-case.sh 가 따로 모은다 |
@@ -228,7 +228,6 @@ monitor.sh [-p PATTERN] [-i INTERVAL_SEC] [-o LOG_FILE] [-l APP_LOG] [-n COUNT] 
 answers/
 ├── README.md          이 문서
 ├── PLAN.md            목표·격리 방식·실험 원칙·탐색 결과·실험 매트릭스·결과
-├── EXPLAIN.md         미션 목표 4문항 + 평가 20문항 답변
 ├── WORKLOG.md         시도 / 결과 / 판단 기록
 ├── monitor.sh         관제 스크립트
 ├── tests/test_monitor.sh
