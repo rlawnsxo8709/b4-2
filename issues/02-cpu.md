@@ -13,7 +13,7 @@
 ```
 
 **언제·어떤 조건에서:** `CPU_MAX_OCCUPY=80`, `MEMORY_LIMIT=512`, `MULTI_THREAD_ENABLE=false` 로 2회 실행했다.
-`MEMORY_LIMIT` 을 512 로 고정한 이유가 있다. 256 이하이면 OOM 동작이 먼저 선택돼 32초에 죽는다. 그러면 CPU 동작을 볼 수 없다(`evidence/00-explore/c-cpu10/`).
+`MEMORY_LIMIT` 은 OOM 동작과 섞이지 않도록 512 로 고정했다. 256 이하이면 OOM 동작(32초에 자체 종료)이 선택된다(`evidence/00-explore/a-default/`, `c-cpu10/` 은 CPU 10%·256MB 조합). 256MB 와 CPU 50 초과를 함께 준 조합은 시험하지 않았다.
 - before-1: 09:28:11 시작 → 09:28:54 종료(43초), 워커 PID 31
 - before-2: 09:29:00 시작 → 09:29:34 종료(34초), 워커 PID 31
 
@@ -111,10 +111,12 @@ Threads:   1 total,   0 running,   1 sleeping,   0 stopped,   0 zombie
 
 **직접 원인 — 설정 상한이 와치독 임계치보다 높다.** 탐색과 본 실험에서 관찰한 동작은 다음과 같다(`evidence/00-explore/manual-512-healthy.app.log`, `evidence/cpu/*/app.log`).
 
-| `CPU_MAX_OCCUPY` | CpuWorker 동작 | 결과 |
-|---|---|---|
-| ≤ 50 (예: 50) | Load 를 그 값까지 올림 → `Peak reached (50.00%). Starting cooldown...` → 5% 까지 내림 → 반복 | 와치독 미발동, 계속 생존 |
-| > 50 (예: 80) | Load 를 80 까지 올리려다 50% 를 넘음 | `CPU Threshold Violated!` → `WATCHDOG … (SIGTERM)` |
+| `CPU_MAX_OCCUPY` | CpuWorker 동작 | 결과 | 근거 수준 |
+|---|---|---|---|
+| 50 | Load 를 50% 까지 올림 → `Peak reached (50.00%). Starting cooldown...` → 5% 까지 내림 → 반복 | 와치독 미발동, 계속 생존 | **실제 실행**: `cpu/after-1·2`(각 300초), `manual-512-healthy.app.log` 등 |
+| 10·30·49 | 배너 `[ OK ]`, `Scenario Selected: [Healthy System Monitoring]` 까지만 확인 | (장시간 동작은 미확인) | 10초 배너 탐침뿐(`probe-banner.txt`) |
+| 51·70·80·90·100 | 배너 `WARNING: Recommend Under 50%`, CpuWorker 가 `Maximum CPU Limit: <값>%` 로 시작 | — | 10초 배너 탐침(`probe-banner.txt`) |
+| 80 | Load 를 80 까지 올리려다 50% 를 넘음 | `CPU Threshold Violated!` → `WATCHDOG … (SIGTERM)` | **실제 실행**: `cpu/before-1·2`, `e-cpu80-mem512` |
 
 와치독 임계치는 50% 로 보인다. 위반 값 56.38·52.39·56.02% 가 모두 50% 를 처음 넘은 값이었다. 반면 `CPU_MAX_OCCUPY` 는 작업자가 올라갈 수 있는 **상한**이다. 상한(80)이 임계치(50)보다 높으면 작업자는 반드시 임계치를 지나가므로, 와치독 발동은 시간 문제다. 부팅 시 경고(`Recommend Under 50%`)만 하고 기동을 막지 않는 것이 설정 결함이다.
 
