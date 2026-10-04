@@ -13,7 +13,7 @@
 ```
 
 **언제·어떤 조건에서:** `CPU_MAX_OCCUPY=80`, `MEMORY_LIMIT=512`, `MULTI_THREAD_ENABLE=false` 로 2회 실행했다.
-`MEMORY_LIMIT` 은 OOM 동작과 섞이지 않도록 512 로 고정했다. 256 이하이면 OOM 동작(32초에 자체 종료)이 선택된다(`evidence/00-explore/a-default/`, `c-cpu10/` 은 CPU 10%·256MB 조합). 256MB 와 CPU 50 초과를 함께 준 조합은 시험하지 않았다.
+`MEMORY_LIMIT` 은 OOM 동작과 섞이지 않도록 512 로 고정했다. 256 이하이면 OOM 동작이 선택돼 한도에 따라 자체 종료된다(256MB 에서 32초 `evidence/oom/before-1·2`, 128MB 에서 18초 `evidence/oom/low128-1·2`). 탐색 실행 `evidence/00-explore/a-default/`(CPU 50%)와 `c-cpu10/`(CPU 10%)도 256MB 에서 32초였다. 256MB 와 CPU 50 초과를 함께 준 조합은 시험하지 않았다.
 - before-1: 09:28:11 시작 → 09:28:54 종료(43초), 워커 PID 31
 - before-2: 09:29:00 시작 → 09:29:34 종료(34초), 워커 PID 31
 

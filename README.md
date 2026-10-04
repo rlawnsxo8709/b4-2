@@ -35,7 +35,7 @@
 
 | 케이스 | 변수 | Before | After | 핵심 증거 |
 |---|---|---|---|---|
-| **OOM** | `MEMORY_LIMIT` | 256 → **32초 / 32초** 만에 MemoryGuard 자체 종료(exit 137) | 512 → **303초 이상 / 303초 이상** 생존(시간 제한) | RSS 16.4→266.4MB, 8.0MB/s 선형 증가 · `Memory limit exceeded (275MB >= 256MB)` · `SELF-TERMINATED` |
+| **OOM** | `MEMORY_LIMIT` | 256 → **32초 / 32초** 만에 MemoryGuard 자체 종료(exit 137) | 512 → **303초 이상 / 303초 이상** 생존(시간 제한) | RSS 16.4→266.4MB(31초), Heap 증가 구간 09:13:30~55 에서 8.0MB/s 로 선형 증가 · `Memory limit exceeded (275MB >= 256MB)` · `SELF-TERMINATED` |
 | **CPU** | `CPU_MAX_OCCUPY` | 80 → **43초 / 34초** 만에 Watchdog 자체 종료(exit 143) | 50 → **305초 이상 / 305초 이상** 생존(시간 제한) | 앱 Load 5%→56.38% · `CPU Threshold Violated!` · `WATCHDOG: INITIATING EMERGENCY ABORT (SIGTERM)` |
 | **Deadlock** | `MULTI_THREAD_ENABLE` | true → 기동 9초 뒤 로그 정지, **LOG_AGE 232초 / 237초까지 무응답**(PID 생존) | false → **241초 동안 정상 진행**, 로그 정지 최대 3초 | CPU 0.0% · 스레드 3개 `futex_wait_queue` · `WAITING for […] (Status: BLOCKED)` 순환 |
 
@@ -196,7 +196,7 @@ monitor.sh [-p PATTERN] [-i INTERVAL_SEC] [-o LOG_FILE] [-l APP_LOG] [-n COUNT] 
 3. **OOM 의 After 는 "더 오래 버팀"이 아니라 "다른 대응".** 257MB 이상이면 앱이 `Healthy System Monitoring` 동작을 고른다. 이때는 한도에서 `Starting cleanup… MEMORY RECOVERED` 로 메모리를 비우고 계속 산다. 미션 예시처럼 "10분 → 30분"으로 종료가 늦춰지는 모양이 아니었다. 256MB 이하에서는 약 3초당 25MB 씩 늘어, 한도가 클수록 늦게 죽는다(128MB 18초, 256MB 32초. 선형이지만 정비례는 아니다).
 4. **설정 우선순위.** `MEMORY_LIMIT≤256` 이면 `MULTI_THREAD_ENABLE=true` 여도 OOM 이 먼저 일어난다(`evidence/00-explore/b-multithread/`). 그래서 CPU·Deadlock 케이스는 `MEMORY_LIMIT=512` 로 고정했다.
 5. **`SELF-TERMINATED` 줄은 터미널에서만 보인다.** 출력을 파일로 보내면 SIGKILL 직전의 stdout 버퍼가 비워지지 않아 이 줄이 사라진다(`boot.txt` vs `oom-256-tty.txt`). 그래서 run-case.sh 는 앱을 의사 터미널(`script`) 안에서 실행한다.
-6. **종료 시간.** 미션 예시는 "약 10분"이지만 이 바이너리·설정에서 OOM 은 32초, 와치독은 34~43초 만에 일어났다.
+6. **종료 시간.** 미션 예시는 "약 10분"이지만 이 바이너리·설정에서 OOM 은 256MB 에서 32초(128MB 에서 18초), 와치독은 34~43초 만에 일어났다.
 
 ## monitor.sh 개선 방향
 
@@ -204,7 +204,7 @@ monitor.sh [-p PATTERN] [-i INTERVAL_SEC] [-o LOG_FILE] [-l APP_LOG] [-n COUNT] 
 
 | 개선 | 이번 증거에 비추어 |
 |---|---|
-| RSS 증가 기울기(MB/분)와 "한도 도달 예상 시각" 계산 → 임계치 전에 경보 | OOM before 는 8.0MB/s 로 일정했다. Heap 증가 시작 후 첫 3샘플(09:13:30~40)만으로 종료 시점을 1~2초 오차로 근사 예측할 수 있었다(EXPLAIN.md 5-1) |
+| RSS 증가 기울기(MB/분)와 "한도 도달 예상 시각" 계산 → 임계치 전에 경보 | OOM before 는 09:13:30~55 구간에서 8.0MB/s 로 일정했다. Heap 증가 시작 후 첫 3샘플(09:13:30~40)만으로 종료 시점을 1~2초 오차로 근사 예측할 수 있었다(EXPLAIN.md 5-1) |
 | LOG_AGE > N초 + CPU≈0 + PID 생존 → "hang" 경보와 `ps -L -o wchan` 자동 수집 | Deadlock 은 LOG_AGE 만 단조 증가하고 나머지는 평평했다 |
 | 앱 자체 지표(로그의 Load·Heap)와 OS 실측의 차이 경보 | CPU 케이스에서 앱 Load 56% vs 실측 2% |
 | 비정상 종료 시 종료 코드·직전 로그 tail 을 함께 남기기 | 지금은 `NOT_RUNNING` 만 남고, 원인은 run-case.sh 가 따로 모은다 |
