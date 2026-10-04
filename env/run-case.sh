@@ -119,8 +119,12 @@ while :; do
 done
 log "앱 종료 감지 (${END_REASON})"
 
-# monitor 가 NOT_RUNNING 을 최소 1줄 남길 때까지 기다린 뒤 멈춘다(최대 15초).
-for _ in $(seq 1 15); do dx grep -q 'NOT_RUNNING' "$RUN/monitor.log" 2>/dev/null && break; sleep 1; done
+# monitor 가 "앱 PID 를 기록한 뒤의" NOT_RUNNING 을 최소 1줄 남길 때까지 기다린 뒤 멈춘다(최대 15초).
+# 앱이 뜨기 전에 찍힌 이른 NOT_RUNNING 은 종료 증거가 아니므로 인정하지 않는다.
+for _ in $(seq 1 15); do
+    dx awk '/PID:[0-9]/ { seen = 1 } seen && /NOT_RUNNING/ { ok = 1 } END { exit !ok }' "$RUN/monitor.log" 2>/dev/null && break
+    sleep 1
+done
 dx pkill -f monitor.sh
 
 # 회수
@@ -143,11 +147,13 @@ if [ "$END_REASON" = timeout ]; then
 else
     CAUSE="자체 종료 → exit_code=${EXIT_CODE:-?} ($SIG)"
 fi
-[ -n "$WORKER" ] || WORKER=$(awk '/PID:[0-9]/ {sub(/.*PID:/, ""); print $1; exit}' "$EV/monitor.log" 2>/dev/null)
+# 워커 PID 를 못 잡았으면 monitor.log 에 가장 많이 기록된 PID 를 쓴다(첫 줄은 런처일 수 있다).
+[ -n "$WORKER" ] || WORKER=$(awk '/PID:[0-9]/ { c[$3]++ } END { for (k in c) if (c[k] > m) { m = c[k]; b = k } sub(/PID:/, "", b); print b }' "$EV/monitor.log" 2>/dev/null)
 
-peak() { # $1 = 필드 이름(RSS|CPU), 최댓값과 그 시각
-    awk -v f="$1" '
-        /PID:[0-9]/ { for (i = 1; i <= NF; i++) if (index($i, f ":") == 1) {
+peak() { # $1 = 필드 이름(RSS|CPU), 워커 PID 샘플 중 최댓값과 그 시각
+    # 기동 직후 첫 샘플은 런처(부모)일 수 있으므로 워커 PID 줄만 본다.
+    awk -v f="$1" -v w="${WORKER:+PID:$WORKER}" '
+        /PID:[0-9]/ && (w == "" || $3 == w) { for (i = 1; i <= NF; i++) if (index($i, f ":") == 1) {
             v = $i; sub(f ":", "", v); sub(/[%MB]+$/, "", v)
             if (v + 0 > max + 0 || n == 0) { max = v; at = $1 " " $2 } n++ } }
         END { if (n) printf "%s (%s)", max, at; else printf "-" }' "$EV/monitor.log" 2>/dev/null
