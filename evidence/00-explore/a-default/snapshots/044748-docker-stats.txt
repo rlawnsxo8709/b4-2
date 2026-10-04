@@ -1,0 +1,4 @@
+# 2026-10-04 04:47:48
+$ docker stats --no-stream b42-00-explore-a-default   (호스트에서 본 컨테이너 전체 사용량)
+NAME                       CPU %     MEM USAGE / LIMIT   MEM %     PIDS
+b42-00-explore-a-default   1.31%     61.11MiB / 2GiB     2.98%     9

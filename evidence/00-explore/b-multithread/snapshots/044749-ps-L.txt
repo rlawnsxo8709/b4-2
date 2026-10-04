@@ -1,0 +1,4 @@
+# 2026-10-04 04:47:49 (PID 29)
+$ ps -L -o pid,lwp,stat,pcpu,pmem,wchan:32,comm -p 29
+    PID     LWP STAT %CPU %MEM WCHAN                            COMMAND
+     29      29 SN+   1.3  0.0 do_select                        agent-leak-app

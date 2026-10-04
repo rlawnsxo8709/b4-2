@@ -1,0 +1,7 @@
+# 2026-10-04 09:24:07 (PID 23)
+$ ps -ef | grep agent-leak-app
+UID          PID    PPID  C STIME TTY          TIME CMD
+agent         14       7  0 09:24 ?        00:00:00 script -q -f -e -c /opt/agent/agent-leak-app /dev/null
+agent         15      14  0 09:24 pts/0    00:00:00 sh -c /opt/agent/agent-leak-app
+agent         16      15  0 09:24 pts/0    00:00:00 /opt/agent/agent-leak-app
+agent         23      16  1 09:24 pts/0    00:00:00 /opt/agent/agent-leak-app

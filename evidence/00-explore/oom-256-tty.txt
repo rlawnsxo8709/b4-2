@@ -1,0 +1,50 @@
+# 기본값(MEMORY_LIMIT=256)으로 의사 터미널(-t) 할당 후 실행: stdout 버퍼링 영향 확인
+$ date: 2026-10-04 04:42:57
+$ docker exec -t -u agent --env-file env/agent.env b42-explore timeout 90 /opt/agent/agent-leak-app
+>>> Starting Agent Boot Sequence...
+[1/6] Checking User Account               [OK]
+   ... Running as service user 'agent' (uid=1001)
+[2/6] Verifying Environment Variables     [OK]
+   ... All required Envs correct
+[3/6] Checking Required Files             [OK]
+   ... Verified 'secret.key' with correct key string.
+[4/6] Checking Port Availability          [OK]
+   ... Port 15034 is available.
+[5/6] Verifying Log Permission            [OK]
+   ... Log directory is writable: /var/log/agent-app
+[6/6] Verifying Mission Environment       [OK]
+   ... MEMORY_LIMIT=256MB, CPU_MAX_OCCUPY=50%, MULTI_THREAD_ENABLE=False
+------------------------------------------------------------
+All Boot Checks Passed!
+Agent READY
+2026-10-04 04:42:57,728 [INFO] [SafetyGuard] Process priority lowered (nice=10).
+2026-10-04 04:42:57,728 [INFO] Agent listening at port 15034
+
+==================================================
+ [ Agent Initiate ] Resource Check 
+==================================================
+ [ MEMORY ] Limit: 256MB 		[ WARNING: Recommend Over 256MB ]
+ [ CPU    ] Limit: 50%  		[ OK ]
+ [ THREAD ] Concurrency: False 		[ OK ]
+--------------------------------------------------
+ >>> SYSTEM STATUS: STABLE. STARTING WORKLOAD MONITORING...
+==================================================
+
+2026-10-04 04:42:59,746 [INFO] [MemoryWorker] Current Heap: 25MB
+2026-10-04 04:43:02,763 [INFO] [MemoryWorker] Current Heap: 50MB
+2026-10-04 04:43:05,784 [INFO] [MemoryWorker] Current Heap: 75MB
+2026-10-04 04:43:08,807 [INFO] [MemoryWorker] Current Heap: 100MB
+2026-10-04 04:43:11,822 [INFO] [MemoryWorker] Current Heap: 125MB
+2026-10-04 04:43:14,839 [INFO] [MemoryWorker] Current Heap: 150MB
+2026-10-04 04:43:17,852 [INFO] [MemoryWorker] Current Heap: 175MB
+2026-10-04 04:43:20,874 [INFO] [MemoryWorker] Current Heap: 200MB
+2026-10-04 04:43:23,895 [INFO] [MemoryWorker] Current Heap: 225MB
+2026-10-04 04:43:26,918 [INFO] [MemoryWorker] Current Heap: 250MB
+2026-10-04 04:43:29,940 [INFO] [MemoryWorker] Current Heap: 275MB
+2026-10-04 04:43:29,940 [CRITICAL] [MemoryGuard] Memory limit exceeded (275MB >= 256MB) / (Recommend Over 256MB)
+2026-10-04 04:43:29,940 [CRITICAL] [MemoryGuard] Self-terminating process 347 to prevent system instability.
+
+
+>>> [SYSTEM] SELF-TERMINATED (Memory Limit Exceeded) <<<
+
+[exit code: 137]

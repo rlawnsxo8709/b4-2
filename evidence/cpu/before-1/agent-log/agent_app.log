@@ -1,0 +1,18 @@
+2026-10-04 09:28:11,818 [INFO] [SafetyGuard] Process priority lowered (nice=10).
+2026-10-04 09:28:11,818 [INFO] Agent listening at port 15034
+2026-10-04 09:28:13,828 [INFO] [CpuWorker] Started. Maximum CPU Limit: 80%
+2026-10-04 09:28:13,828 [INFO] [CpuWorker] Current Load: 5.00%
+2026-10-04 09:28:16,943 [INFO] [CpuWorker] Current Load: 7.51%
+2026-10-04 09:28:20,058 [INFO] [CpuWorker] Current Load: 8.60%
+2026-10-04 09:28:23,174 [INFO] [CpuWorker] Current Load: 13.30%
+2026-10-04 09:28:26,290 [INFO] [CpuWorker] Current Load: 19.02%
+2026-10-04 09:28:29,404 [INFO] [CpuWorker] Current Load: 24.92%
+2026-10-04 09:28:32,515 [INFO] [CpuWorker] Current Load: 26.58%
+2026-10-04 09:28:35,630 [INFO] [CpuWorker] Current Load: 31.51%
+2026-10-04 09:28:38,739 [INFO] [CpuWorker] Current Load: 37.37%
+2026-10-04 09:28:41,848 [INFO] [CpuWorker] Current Load: 44.67%
+2026-10-04 09:28:44,964 [INFO] [CpuWorker] Current Load: 47.36%
+2026-10-04 09:28:48,080 [INFO] [CpuWorker] Current Load: 49.65%
+2026-10-04 09:28:51,189 [INFO] [CpuWorker] Current Load: 49.85%
+2026-10-04 09:28:54,304 [INFO] [CpuWorker] Current Load: 56.38%
+2026-10-04 09:28:54,404 [CRITICAL] [CpuWorker] CPU Threshold Violated! (56.38%).

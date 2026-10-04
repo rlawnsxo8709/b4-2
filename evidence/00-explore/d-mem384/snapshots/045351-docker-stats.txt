@@ -1,0 +1,4 @@
+# 2026-10-04 04:53:51
+$ docker stats --no-stream b42-00-explore-d-mem384   (호스트에서 본 컨테이너 전체 사용량)
+NAME                      CPU %     MEM USAGE / LIMIT   MEM %     PIDS
+b42-00-explore-d-mem384   3.80%     86.87MiB / 2GiB     4.24%     11

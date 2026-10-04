@@ -1,0 +1,4 @@
+# 2026-10-04 09:34:55
+$ docker stats --no-stream b42-cpu-after-2   (호스트에서 본 컨테이너 전체 사용량)
+NAME              CPU %     MEM USAGE / LIMIT   MEM %     PIDS
+b42-cpu-after-2   2.87%     61.69MiB / 2GiB     3.01%     11

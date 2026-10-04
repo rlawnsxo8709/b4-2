@@ -1,0 +1,12 @@
+# 2026-10-04 14:21:19 호스트 — bash tests/test_monitor.sh
+PASS format
+PASS busy_cpu
+PASS idle_cpu
+PASS log_age
+PASS not_running
+PASS rc0
+PASS append
+PASS count
+PASS pick_worker
+PASS 9 / FAIL 0
+[exit code: 0]

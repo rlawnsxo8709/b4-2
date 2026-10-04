@@ -1,0 +1,16 @@
+$ unzip -l questions/agent-app-leak.zip
+Archive:  questions/agent-app-leak.zip
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+  6261928  2026-05-26 11:04   agent-leak-app-arm64
+      194  2026-05-26 11:04   __MACOSX/._agent-leak-app-arm64
+  6502016  2026-05-26 11:00   agent-leak-app-x86
+      194  2026-05-26 11:00   __MACOSX/._agent-leak-app-x86
+---------                     -------
+ 12764332                     4 files
+
+$ sha256sum questions/agent-app-leak.zip
+249c9c2841718cb29ef2ed680668f328f5ee253354090225347e130a2e456641  questions/agent-app-leak.zip
+
+$ file .runtime/agent-leak-app-arm64
+.runtime/agent-leak-app-arm64: ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, for GNU/Linux 3.7.0, BuildID[sha1]=405a6ae12532efa2eb0c6a479a4a97eb33d24fba, stripped

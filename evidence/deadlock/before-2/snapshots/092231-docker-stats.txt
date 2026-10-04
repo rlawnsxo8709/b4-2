@@ -1,0 +1,4 @@
+# 2026-10-04 09:22:31
+$ docker stats --no-stream b42-deadlock-before-2   (호스트에서 본 컨테이너 전체 사용량)
+NAME                    CPU %     MEM USAGE / LIMIT   MEM %     PIDS
+b42-deadlock-before-2   1.28%     12.41MiB / 2GiB     0.61%     11

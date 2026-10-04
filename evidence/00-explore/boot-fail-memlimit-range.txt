@@ -1,0 +1,19 @@
+# MEMORY_LIMIT=600 (허용 범위 50~512 밖)
+$ date: 2026-10-04 04:38:28
+$ docker exec -u agent --env-file env/agent.env -e MEMORY_LIMIT=600 b42-explore timeout 20 /opt/agent/agent-leak-app
+>>> Starting Agent Boot Sequence...
+[1/6] Checking User Account               [OK]
+   ... Running as service user 'agent' (uid=1001)
+[2/6] Verifying Environment Variables     [OK]
+   ... All required Envs correct
+[3/6] Checking Required Files             [OK]
+   ... Verified 'secret.key' with correct key string.
+[4/6] Checking Port Availability          [OK]
+   ... Port 15034 is available.
+[5/6] Verifying Log Permission            [OK]
+   ... Log directory is writable: /var/log/agent-app
+[6/6] Verifying Mission Environment       [FAIL]
+   >>> MEMORY_LIMIT too high (600MB). Maximum: 512MB
+--------------------------------------------------
+System Boot Failed. Process Terminated.
+[exit code: 1]

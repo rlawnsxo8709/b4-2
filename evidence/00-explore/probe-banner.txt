@@ -1,0 +1,195 @@
+==================================================================
+# 2026-10-04 04:54:52 overrides: MEMORY_LIMIT=257  (timeout 10 초, 배너와 첫 로그만 확인)
+ [ Agent Initiate ] Resource Check 
+==================================================
+ [ MEMORY ] Limit: 257MB 		[ OK ]
+ [ CPU    ] Limit: 50%  		[ OK ]
+ [ THREAD ] Concurrency: False 		[ OK ]
+--------------------------------------------------
+ >>> SYSTEM STATUS: STABLE. STARTING WORKLOAD MONITORING...
+==================================================
+
+2026-10-04 04:54:54,932 [INFO] >>> Scenario Selected: [Healthy System Monitoring]
+
+>>> [SYSTEM] ALL CONFIGURATIONS OPTIMAL. RUNNING STABILITY TEST... <<<
+
+2026-10-04 04:54:54,933 [INFO] [Scheduler] Task Scheduler Initialized.
+2026-10-04 04:54:54,933 [INFO] [Scheduler] Registered Tasks: ['Thread-A', 'Thread-B', 'Thread-C']
+2026-10-04 04:54:54,933 [INFO] [Scheduler] Starting task execution...
+2026-10-04 04:54:54,933 [INFO] [Thread-A] Task Started. Calculating... (20%)
+2026-10-04 04:54:54,983 [INFO] [Thread-A] Calculating... (40%)
+2026-10-04 04:54:55,034 [INFO] [Thread-A] Preempted. Progress saved at (40%)
+2026-10-04 04:54:55,085 [INFO] [Thread-B] Task Started. Calculating... (20%)
+2026-10-04 04:54:55,135 [INFO] [Thread-B] Calculating... (40%)
+2026-10-04 04:54:55,186 [INFO] [Thread-B] Preempted. Progress saved at (40%)
+==================================================================
+# 2026-10-04 04:55:02 overrides: MEMORY_LIMIT=300  (timeout 10 초, 배너와 첫 로그만 확인)
+ [ Agent Initiate ] Resource Check 
+==================================================
+ [ MEMORY ] Limit: 300MB 		[ OK ]
+ [ CPU    ] Limit: 50%  		[ OK ]
+ [ THREAD ] Concurrency: False 		[ OK ]
+--------------------------------------------------
+ >>> SYSTEM STATUS: STABLE. STARTING WORKLOAD MONITORING...
+==================================================
+
+2026-10-04 04:55:05,013 [INFO] >>> Scenario Selected: [Healthy System Monitoring]
+
+>>> [SYSTEM] ALL CONFIGURATIONS OPTIMAL. RUNNING STABILITY TEST... <<<
+
+2026-10-04 04:55:05,013 [INFO] [Scheduler] Task Scheduler Initialized.
+2026-10-04 04:55:05,013 [INFO] [Scheduler] Registered Tasks: ['Thread-A', 'Thread-B', 'Thread-C']
+2026-10-04 04:55:05,013 [INFO] [Scheduler] Starting task execution...
+2026-10-04 04:55:05,013 [INFO] [Thread-A] Task Started. Calculating... (20%)
+2026-10-04 04:55:05,063 [INFO] [Thread-A] Calculating... (40%)
+2026-10-04 04:55:05,114 [INFO] [Thread-A] Preempted. Progress saved at (40%)
+2026-10-04 04:55:05,164 [INFO] [Thread-B] Task Started. Calculating... (20%)
+2026-10-04 04:55:05,215 [INFO] [Thread-B] Calculating... (40%)
+2026-10-04 04:55:05,265 [INFO] [Thread-B] Preempted. Progress saved at (40%)
+==================================================================
+# 2026-10-04 04:55:12 overrides: MEMORY_LIMIT=512 CPU_MAX_OCCUPY=10  (timeout 10 초, 배너와 첫 로그만 확인)
+ [ Agent Initiate ] Resource Check 
+==================================================
+ [ MEMORY ] Limit: 512MB 		[ OK ]
+ [ CPU    ] Limit: 10%  		[ OK ]
+ [ THREAD ] Concurrency: False 		[ OK ]
+--------------------------------------------------
+ >>> SYSTEM STATUS: STABLE. STARTING WORKLOAD MONITORING...
+==================================================
+
+2026-10-04 04:55:15,084 [INFO] >>> Scenario Selected: [Healthy System Monitoring]
+
+>>> [SYSTEM] ALL CONFIGURATIONS OPTIMAL. RUNNING STABILITY TEST... <<<
+
+2026-10-04 04:55:15,085 [INFO] [Scheduler] Task Scheduler Initialized.
+2026-10-04 04:55:15,085 [INFO] [Scheduler] Registered Tasks: ['Thread-A', 'Thread-B', 'Thread-C']
+2026-10-04 04:55:15,085 [INFO] [Scheduler] Starting task execution...
+2026-10-04 04:55:15,085 [INFO] [Thread-A] Task Started. Calculating... (20%)
+2026-10-04 04:55:15,136 [INFO] [Thread-A] Calculating... (40%)
+2026-10-04 04:55:15,186 [INFO] [Thread-A] Preempted. Progress saved at (40%)
+2026-10-04 04:55:15,237 [INFO] [Thread-B] Task Started. Calculating... (20%)
+2026-10-04 04:55:15,288 [INFO] [Thread-B] Calculating... (40%)
+2026-10-04 04:55:15,338 [INFO] [Thread-B] Preempted. Progress saved at (40%)
+==================================================================
+# 2026-10-04 04:55:22 overrides: MEMORY_LIMIT=512 CPU_MAX_OCCUPY=30  (timeout 10 초, 배너와 첫 로그만 확인)
+ [ Agent Initiate ] Resource Check 
+==================================================
+ [ MEMORY ] Limit: 512MB 		[ OK ]
+ [ CPU    ] Limit: 30%  		[ OK ]
+ [ THREAD ] Concurrency: False 		[ OK ]
+--------------------------------------------------
+ >>> SYSTEM STATUS: STABLE. STARTING WORKLOAD MONITORING...
+==================================================
+
+2026-10-04 04:55:25,146 [INFO] >>> Scenario Selected: [Healthy System Monitoring]
+
+>>> [SYSTEM] ALL CONFIGURATIONS OPTIMAL. RUNNING STABILITY TEST... <<<
+
+2026-10-04 04:55:25,146 [INFO] [Scheduler] Task Scheduler Initialized.
+2026-10-04 04:55:25,146 [INFO] [Scheduler] Registered Tasks: ['Thread-A', 'Thread-B', 'Thread-C']
+2026-10-04 04:55:25,146 [INFO] [Scheduler] Starting task execution...
+2026-10-04 04:55:25,146 [INFO] [Thread-A] Task Started. Calculating... (20%)
+2026-10-04 04:55:25,197 [INFO] [Thread-A] Calculating... (40%)
+2026-10-04 04:55:25,248 [INFO] [Thread-A] Preempted. Progress saved at (40%)
+2026-10-04 04:55:25,299 [INFO] [Thread-B] Task Started. Calculating... (20%)
+2026-10-04 04:55:25,349 [INFO] [Thread-B] Calculating... (40%)
+2026-10-04 04:55:25,400 [INFO] [Thread-B] Preempted. Progress saved at (40%)
+==================================================================
+# 2026-10-04 04:55:33 overrides: MEMORY_LIMIT=512 CPU_MAX_OCCUPY=49  (timeout 10 초, 배너와 첫 로그만 확인)
+ [ Agent Initiate ] Resource Check 
+==================================================
+ [ MEMORY ] Limit: 512MB 		[ OK ]
+ [ CPU    ] Limit: 49%  		[ OK ]
+ [ THREAD ] Concurrency: False 		[ OK ]
+--------------------------------------------------
+ >>> SYSTEM STATUS: STABLE. STARTING WORKLOAD MONITORING...
+==================================================
+
+2026-10-04 04:55:35,205 [INFO] >>> Scenario Selected: [Healthy System Monitoring]
+
+>>> [SYSTEM] ALL CONFIGURATIONS OPTIMAL. RUNNING STABILITY TEST... <<<
+
+2026-10-04 04:55:35,206 [INFO] [Scheduler] Task Scheduler Initialized.
+2026-10-04 04:55:35,206 [INFO] [Scheduler] Registered Tasks: ['Thread-A', 'Thread-B', 'Thread-C']
+2026-10-04 04:55:35,206 [INFO] [Scheduler] Starting task execution...
+2026-10-04 04:55:35,206 [INFO] [Thread-A] Task Started. Calculating... (20%)
+2026-10-04 04:55:35,256 [INFO] [Thread-A] Calculating... (40%)
+2026-10-04 04:55:35,307 [INFO] [Thread-A] Preempted. Progress saved at (40%)
+2026-10-04 04:55:35,358 [INFO] [Thread-B] Task Started. Calculating... (20%)
+2026-10-04 04:55:35,408 [INFO] [Thread-B] Calculating... (40%)
+2026-10-04 04:55:35,459 [INFO] [Thread-B] Preempted. Progress saved at (40%)
+==================================================================
+# 2026-10-04 04:55:43 overrides: MEMORY_LIMIT=512 CPU_MAX_OCCUPY=51  (timeout 10 초, 배너와 첫 로그만 확인)
+ [ Agent Initiate ] Resource Check 
+==================================================
+ [ MEMORY ] Limit: 512MB 		[ OK ]
+ [ CPU    ] Limit: 51%  		[ WARNING: Recommend Under 50% ]
+ [ THREAD ] Concurrency: False 		[ OK ]
+--------------------------------------------------
+ >>> SYSTEM STATUS: STABLE. STARTING WORKLOAD MONITORING...
+==================================================
+
+2026-10-04 04:55:45,250 [INFO] [CpuWorker] Started. Maximum CPU Limit: 51%
+2026-10-04 04:55:45,250 [INFO] [CpuWorker] Current Load: 5.00%
+2026-10-04 04:55:48,366 [INFO] [CpuWorker] Current Load: 6.39%
+2026-10-04 04:55:51,482 [INFO] [CpuWorker] Current Load: 12.22%
+==================================================================
+# 2026-10-04 04:55:53 overrides: MEMORY_LIMIT=512 CPU_MAX_OCCUPY=70  (timeout 10 초, 배너와 첫 로그만 확인)
+ [ Agent Initiate ] Resource Check 
+==================================================
+ [ MEMORY ] Limit: 512MB 		[ OK ]
+ [ CPU    ] Limit: 70%  		[ WARNING: Recommend Under 50% ]
+ [ THREAD ] Concurrency: False 		[ OK ]
+--------------------------------------------------
+ >>> SYSTEM STATUS: STABLE. STARTING WORKLOAD MONITORING...
+==================================================
+
+2026-10-04 04:55:55,292 [INFO] [CpuWorker] Started. Maximum CPU Limit: 70%
+2026-10-04 04:55:55,292 [INFO] [CpuWorker] Current Load: 5.00%
+2026-10-04 04:55:58,407 [INFO] [CpuWorker] Current Load: 10.78%
+2026-10-04 04:56:01,519 [INFO] [CpuWorker] Current Load: 14.41%
+==================================================================
+# 2026-10-04 04:56:03 overrides: MEMORY_LIMIT=512 CPU_MAX_OCCUPY=80  (timeout 10 초, 배너와 첫 로그만 확인)
+ [ Agent Initiate ] Resource Check 
+==================================================
+ [ MEMORY ] Limit: 512MB 		[ OK ]
+ [ CPU    ] Limit: 80%  		[ WARNING: Recommend Under 50% ]
+ [ THREAD ] Concurrency: False 		[ OK ]
+--------------------------------------------------
+ >>> SYSTEM STATUS: STABLE. STARTING WORKLOAD MONITORING...
+==================================================
+
+2026-10-04 04:56:05,356 [INFO] [CpuWorker] Started. Maximum CPU Limit: 80%
+2026-10-04 04:56:05,356 [INFO] [CpuWorker] Current Load: 5.00%
+2026-10-04 04:56:08,472 [INFO] [CpuWorker] Current Load: 11.58%
+2026-10-04 04:56:11,588 [INFO] [CpuWorker] Current Load: 13.28%
+==================================================================
+# 2026-10-04 04:56:13 overrides: MEMORY_LIMIT=512 CPU_MAX_OCCUPY=90  (timeout 10 초, 배너와 첫 로그만 확인)
+ [ Agent Initiate ] Resource Check 
+==================================================
+ [ MEMORY ] Limit: 512MB 		[ OK ]
+ [ CPU    ] Limit: 90%  		[ WARNING: Recommend Under 50% ]
+ [ THREAD ] Concurrency: False 		[ OK ]
+--------------------------------------------------
+ >>> SYSTEM STATUS: STABLE. STARTING WORKLOAD MONITORING...
+==================================================
+
+2026-10-04 04:56:15,391 [INFO] [CpuWorker] Started. Maximum CPU Limit: 90%
+2026-10-04 04:56:15,392 [INFO] [CpuWorker] Current Load: 5.00%
+2026-10-04 04:56:18,500 [INFO] [CpuWorker] Current Load: 6.49%
+2026-10-04 04:56:21,616 [INFO] [CpuWorker] Current Load: 15.03%
+==================================================================
+# 2026-10-04 04:56:23 overrides: MEMORY_LIMIT=512 CPU_MAX_OCCUPY=100  (timeout 10 초, 배너와 첫 로그만 확인)
+ [ Agent Initiate ] Resource Check 
+==================================================
+ [ MEMORY ] Limit: 512MB 		[ OK ]
+ [ CPU    ] Limit: 100%  		[ WARNING: Recommend Under 50% ]
+ [ THREAD ] Concurrency: False 		[ OK ]
+--------------------------------------------------
+ >>> SYSTEM STATUS: STABLE. STARTING WORKLOAD MONITORING...
+==================================================
+
+2026-10-04 04:56:25,443 [INFO] [CpuWorker] Started. Maximum CPU Limit: 100%
+2026-10-04 04:56:25,443 [INFO] [CpuWorker] Current Load: 5.00%
+2026-10-04 04:56:28,557 [INFO] [CpuWorker] Current Load: 10.22%
+2026-10-04 04:56:31,672 [INFO] [CpuWorker] Current Load: 14.31%

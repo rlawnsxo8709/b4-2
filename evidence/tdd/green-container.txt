@@ -1,0 +1,12 @@
+# 2026-10-04 14:21:26 컨테이너 — docker run --rm --cpus=2 --memory=2g --pids-limit=512 -v "$PWD:/w:ro" -w /w b4-2-lab bash tests/test_monitor.sh
+PASS format
+PASS busy_cpu
+PASS idle_cpu
+PASS log_age
+PASS not_running
+PASS rc0
+PASS append
+PASS count
+PASS pick_worker
+PASS 9 / FAIL 0
+[exit code: 0]

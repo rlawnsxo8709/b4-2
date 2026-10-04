@@ -1,0 +1,19 @@
+# root 계정으로 실행
+$ date: 2026-10-04 04:38:28
+$ docker exec --env-file env/agent.env b42-explore timeout 20 /opt/agent/agent-leak-app
+>>> Starting Agent Boot Sequence...
+[1/6] Checking User Account               [FAIL]
+   >>> Error: Running as 'root' is forbidden.
+[2/6] Verifying Environment Variables     [FAIL]
+   >>> Skipped due to previous critical failure.
+[3/6] Checking Required Files             [FAIL]
+   >>> Skipped due to previous critical failure.
+[4/6] Checking Port Availability          [FAIL]
+   >>> Skipped due to previous critical failure.
+[5/6] Verifying Log Permission            [FAIL]
+   >>> Skipped due to previous critical failure.
+[6/6] Verifying Mission Environment       [FAIL]
+   >>> Skipped due to previous critical failure.
+--------------------------------------------------
+System Boot Failed. Process Terminated.
+[exit code: 1]
