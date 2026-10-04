@@ -6,6 +6,7 @@
 | | |
 |---|---|
 | 리포트 | [issues/01-oom.md](issues/01-oom.md) · [issues/02-cpu.md](issues/02-cpu.md) · [issues/03-deadlock.md](issues/03-deadlock.md) |
+| GitHub Issue | [#1 OOM](https://github.com/rlawnsxo8709/b4-2/issues/1) · [#2 CPU 과점유](https://github.com/rlawnsxo8709/b4-2/issues/2) · [#3 Deadlock](https://github.com/rlawnsxo8709/b4-2/issues/3) |
 | 실행 환경 | Docker 29 · ubuntu:24.04 컨테이너 · 호스트 Linux aarch64 |
 | 관제 스크립트 | [monitor.sh](monitor.sh) (Bash, `/proc` 기반) · 테스트 [tests/test_monitor.sh](tests/test_monitor.sh) |
 | 실험 실행기 | [env/run-case.sh](env/run-case.sh) · [env/run-matrix.sh](env/run-matrix.sh) |
